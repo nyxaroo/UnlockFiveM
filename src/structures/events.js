@@ -1,11 +1,13 @@
 const path = require('path');
 const colors = require('colors');
 const fs = require('fs');
+const t = require('../utils/translate');
+const config = require('../../config.json');
 
 module.exports = async (client) => {
     try {
         const files = fs.readdirSync('./src/events');
-        console.log(colors.red('=== Events ==='));
+        console.log(colors.red(`=== ${t(config.language, 'events')} ===`));
         files
             .filter((file) => file.endsWith('.js'))
             .forEach((fileName) => {
@@ -15,7 +17,7 @@ module.exports = async (client) => {
                 console.log(
                     colors.green('-> ') +
                     ' ' +
-                    colors.gray(`Event ${colors.cyan(eventName)} activé avec succès !`)
+                    colors.gray(`${t(config.language, 'event')} ${colors.cyan(eventName)} ${t(config.language, 'activated')}`)
                 );
             });
     } catch (error) {

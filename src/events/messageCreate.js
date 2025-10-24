@@ -20,8 +20,8 @@ module.exports = async (client, message) => {
             const Discord = require('discord.js');
             const embed = new Discord.EmbedBuilder()
                 .setColor(0xFF0000)
-                .setTitle('Commande invalide')
-                .setDescription(`❌ La commande \`${config.prefix}${command}\` n'existe pas !`);
+                .setTitle(`${t(config.language, 'invalid_command')}`)
+                .setDescription(`❌ ${t(config.language, 'command')} \`${config.prefix}${command}\` ${t(config.language, 'not_exist')}`);
             message.reply({ embeds: [embed] });
         } else {
             console.log(err);

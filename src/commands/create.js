@@ -1,12 +1,15 @@
 const Discord = require("discord.js");
+const t = require('../utils/translate');
+const config = require('../../config.json');
 
 module.exports = {
     name: "create",
     type: Discord.ApplicationCommandType.ChatInput,
-    description: "Crée un fil privé avec le bot pour discuter ou recevoir des fichiers.",
+    description: `${t(config.language, 'create_private_channel')}`,
     run: async (client, interaction) => {
         try {
-            const baseCategoryName = "privé-utilisateurs";
+            const baseCategoryName = `${t(config.language, 'private_channels')}
+`;
             let categoryIndex = 1;
             let categoryName = baseCategoryName;
             let category = interaction.guild.channels.cache.find(c => c.type === Discord.ChannelType.GuildCategory && c.name === categoryName);
@@ -23,10 +26,10 @@ module.exports = {
                 });
             }
 
-            const channelName = `privé-${interaction.author.id}`;
+            const channelName = `${t(config.language, 'private')}-${interaction.author.id}`;
             const existing = interaction.guild.channels.cache.find(c => c.parentId === category.id && c.name === channelName);
             if (existing) {
-                interaction.reply({ content: "❌ Tu as déjà un salon privé. Utilise-le pour discuter avec le bot.", ephemeral: true });
+                interaction.reply({ content: `❌ ${t(config.language, 'already_have_private_channel')}`, ephemeral: true });
                 return;
             }
 
@@ -52,18 +55,18 @@ module.exports = {
 
             const embed = new Discord.EmbedBuilder()
                 .setColor("#5865F2")
-                .setTitle("Bienvenue dans ton salon privé !")
+                .setTitle(`${t(config.language, 'welcome_private_channel')}`)
                 .setDescription(
-                    `Bienvenue <@${interaction.author.id}> !\n\n` +
-                    `Pour savoir comment faire, consulte les explications dans <#1395050438436323429>.\n\n` +
-                    `Quand tu veux fermer ce ticket, utilise la commande \`&deletecfx\` ou le bouton ci-dessous.`
+                    `${t(config.language, 'welcome')} <@${interaction.author.id}> !\n\n` +
+                    `${t(config.language, 'check_instructions')} <#1395050438436323429>.\n\n` +
+                    `${t(config.language, 'close_ticket_instruction')}`
                 )
                 .setFooter({ text: "by S4NA DEV & Nyxaro" });
 
             const row = new Discord.ActionRowBuilder().addComponents(
                 new Discord.ButtonBuilder()
                     .setCustomId("deletecfx_btn")
-                    .setLabel("Fermer le salon")
+                    .setLabel(`${t(config.language, 'close_channel')}`)
                     .setStyle(Discord.ButtonStyle.Danger)
             );
 
@@ -72,19 +75,19 @@ module.exports = {
             const filter = i => i.customId === "deletecfx_btn" && i.user.id === interaction.author.id;
             const collector = privateChannel.createMessageComponentCollector({ filter, time: 3600 * 1000 });
             collector.on('collect', async i => {
-                await i.reply({ content: "Salon supprimé !" });
-                await privateChannel.delete("Suppression demandée via bouton.");
+                await i.reply({ content: `${t(config.language, 'channel_deleted')}` });
+                await privateChannel.delete(`${t(config.language, 'deletion_requested_button')}`);
                 collector.stop();
             });
 
             try { await interaction.delete(); } catch (e) {}
 
             setTimeout(() => {
-                privateChannel.delete("Suppression automatique du salon privé.");
+                privateChannel.delete(`${t(config.language, 'auto_private_channel_deletion')}`);
             }, 60 * 60 * 1000);
         } catch (error) {
             console.error(error);
-            interaction.reply("Erreur lors de la création du fil privé.");
+            interaction.reply(`${t(config.language, 'error_creating_private_channel')}`);
         }
     }
 };

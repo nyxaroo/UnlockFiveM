@@ -1,3 +1,4 @@
+const t = require('./src/utils/translate');
 const Discord = require('discord.js'),
 
     { Client, GatewayIntentBits, ApplicationCommandOptionType, ButtonStyle, EmbedBuilder, ButtonBuilder, ActionRowBuilder } = require('discord.js'),
@@ -18,6 +19,26 @@ const Discord = require('discord.js'),
     commandes = require('./src/structures/commands'),
     events = require('./src/structures/events')
     
+    if (!config.token || config.token === "TOKENBOT") {
+        console.error(`${t(config.language, 'error_no_token')}`);
+        process.exit(1);
+    }
+
+    if (!config.guild || config.guild === "IDSERVEUR") {
+        console.error(`${t(config.language, 'error_no_guild')}`);
+        process.exit(1);
+    }
+
+    if (!config.roles || config.roles.user === "IDROLE") {
+        console.error(`${t(config.language, 'error_no_roles')}`);
+        process.exit(1);
+    }
+
+    if (!config.channels || config.channels.cfx === "IDSALON") {
+        console.error(`${t(config.language, 'error_no_channels')}`);
+        process.exit(1);
+    }
+
 commandes()
 events(client)
 
@@ -31,12 +52,12 @@ client.on('interactionCreate', (interaction) => {
     }
 });
 
-client.once('ready', () => {
-    console.log(`Bot connecté en tant que ${client.user.tag}`);
+client.once('clientReady', () => {
+    console.log(`${t(config.language, 'connected_as')} ${client.user.tag}`);
 });
 
 client.login(config.token).catch(err => {
-    console.error('Erreur de connexion:', err);
+    console.error(`${t(config.language, 'connection_error')}`, err);
 });
 
 process.on('beforeExit', (code) => { //
@@ -52,14 +73,14 @@ process.on('exit', (error) => { //
   console.error(type, promise, reason);
 }); */
 process.on('unhandledRejection', (error) => {
-    console.error('Erreur non gérée (Promise):', error);
+    console.error(`${t(config.language, 'unhandled_error')}`, error);
 });
 process.on('rejectionHandled', (promise) => { //
   console.error('[antiCrash] :: [rejectionHandled]');
   console.error(promise);
 })
 process.on("uncaughtException", (error) => {
-    console.error('Exception non attrapée:', error);
+    console.error(`${t(config.language, 'uncaught_exception')}`, error);
     process.exit(1);
 });
 process.on('uncaughtExceptionMonitor', (err, origin) => {

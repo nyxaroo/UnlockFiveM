@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 const ps = require('ps-node');
+const t = require('../utils/translate');
 var dis = false
 
 const FOLDER_FILE = path.join(__dirname, '../../cfx/resources/dumpresource');
@@ -19,8 +20,8 @@ module.exports = {
         if (!interaction.member.roles.cache.has(config.roles.user)) {
             const embed = new Discord.EmbedBuilder()
                 .setColor(0xFF0000)
-                .setTitle('Permission refusée')
-                .setDescription("❌ **Vous n'avez pas les permissions d'utiliser cette commande.** \nVeuillez contacter un administrateur si vous pensez que c'est une erreur.");
+                .setTitle(`${t(config.language, 'permission_denied')}`)
+                .setDescription(`❌ ${t(config.language, 'no_permission_command')}`);
             interaction.reply({ embeds: [embed], ephemeral: true });
             return;
         }
@@ -30,8 +31,8 @@ module.exports = {
             if(dis===true){
                 const embed = new Discord.EmbedBuilder()
                     .setColor(0xFF0000)
-                    .setTitle('Décryptage en cours')
-                    .setDescription("❌ **Le bot est déjà en train de décrypté un fichier.** \nVeuillez patienter avant de lancer une nouvelle commande.");
+                    .setTitle(`${t(config.language, 'decrypting_in_progress')}`)
+                    .setDescription(`❌ ${t(config.language, 'bot_already_decrypting')}`);
                 interaction.reply({ embeds: [embed], ephemeral: true });
                 return;
             }
@@ -43,8 +44,8 @@ module.exports = {
             if (!key) {
                 const embed = new Discord.EmbedBuilder()
                     .setColor(0xFF0000)
-                    .setTitle('Clé manquante')
-                    .setDescription('❌ **Vous devez mettre votre clé keymaster pour pouvoir utiliser cette commande!**\n\n*Script by : S4NA DEV & xvScripts*');
+                    .setTitle(`${t(config.language, 'missing_key')}`)
+                    .setDescription(`❌ ${t(config.language, 'missing_keymaster_key')}`);
                 interaction.reply({ embeds: [embed], ephemeral: true });
                 return;
             }
@@ -52,7 +53,11 @@ module.exports = {
             const fxapAttachment = interaction.attachments.find(att => att.name.endsWith('fxap'));
             const luaAttachment = interaction.attachments.find(att => att.name.endsWith('.lua'));
             if (!fxapAttachment || !luaAttachment) {
-                interaction.reply(`❌ **Vous devez joindre un fichier \`.fxap\` et un fichier \`server.lua\` !** \n\n*Script by : S4NA DEV & xvScripts*`);
+                const embed = new Discord.EmbedBuilder()
+                    .setColor(0xFF0000)
+                    .setTitle(`${t(config.language, 'missing_attachments')}`)
+                    .setDescription(`❌ ${t(config.language, 'need_file_attachments')}`);
+                interaction.reply({ embeds: [embed], ephemeral: true });
                 return;
             }
             const { default: fetch } = await import('node-fetch');
@@ -88,8 +93,8 @@ module.exports = {
 
             const embed = new Discord.EmbedBuilder()
                 .setColor(0x00FF00)
-                .setTitle('Décryptage en cours')
-                .setDescription('💥 **Je décrypte le fichier, veuillez patienter !**\n\n⚠️ **Assurez-vous d\'avoir bien ouvert vos messages privés, sinon vous ne recevrez rien !**');
+                .setTitle(`${t(config.language, 'decrypting_in_progress')}`)
+                .setDescription(`💥 ${t(config.language, 'decrypting_please_wait')}\n\n⚠️ **${t(config.language, 'enable_private_messages_warning')}**`);
             interaction.reply({ embeds: [embed], ephemeral: false });
 
             function terminaProcessoFxServer() {
@@ -146,14 +151,14 @@ module.exports = {
                     const user = await client.users.fetch(userId);
                     const file = fs.readFileSync(tempFile);
                     await user.send({ files: [{ attachment: file, name: 's4naunlock.lua' }] });
-                    await user.send("✅ **Ton fichier est prêt ! Il ne te reste plus qu'à demander à ChatGPT de nettoyer ton code Lua.**\n\nExemple de message à envoyer à ChatGPT :\n```Est-ce que tu peux me nettoyer ce code Lua s'il te plaît ?```");
+                    await user.send(`✅ ${t(config.language, 'file_ready_clean_with_chatgpt')}\n\n${t(config.language, 'example_message_for_chatgpt')}\n\`\`\`${t(config.language, 'clean_lua_request_example')}\`\`\``);
 
                     eliminaFile(tempFile)
-                        .then(() => { console.log('❌ Fichier supprimé avec succès :', tempFile); })
-                        .catch((errore) => { console.error('❌ Erreur lors de la suppression du fichier :', errore); });
+                        .then(() => { console.log(`❌ ${t(config.language, 'file_deleted_success')}`, tempFile); })
+                        .catch((errore) => { console.error(`❌ ${t(config.language, 'file_delete_error')}`, errore); });
                     dis = false;
                 } catch (error) {
-                    console.error('❌ Erreur lors de l\'envoi du message privé:', error);
+                    console.error(`❌ ${t(config.language, 'private_message_send_error')}`, error);
                 }
             }
 
@@ -176,7 +181,7 @@ module.exports = {
 
         } catch (error) {
             console.error(error);
-            interaction.reply('Une erreur s\'est produite lors de l\'exécution de la commande.');
+            interaction.reply(`${t(config.language, 'command_execution_error')}`);
         }
     }
 };
