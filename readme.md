@@ -1,3 +1,25 @@
+# FiveM ont patch le turboh, ce tool ne fonctionne donc plus.
+--- 
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Tuto Pour Installer l'EscrowDecrypter
 ⚠️ **Ce Décrypteur ne peut débloquer que le côté serveur.**
 ⚠️ Il faut avoir l'asset sur SA CLÉ KEYMASTER !
@@ -51,6 +73,7 @@ Voilà le lien : https://pastebin.com/7c65XcJ1 et au cas ou il saute je vous don
 # Installation en vidéo, flemme de le tout montrer
 
 https://github.com/user-attachments/assets/833d0432-bdd3-4d2b-9886-0d8cc2afca07
+
 
 
 
